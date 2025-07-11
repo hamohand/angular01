@@ -1,0 +1,14 @@
+services:
+  monimage:
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Montez le répertoire de certificats Let's Encrypt depuis l'hôte en lecture seule
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      # Assurez-vous que ce fichier existe également sur l'hôte
+      #      - /path/to/your/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
+      #      -  Remplacez `/path/to/your/ssl-dhparams.pem` par le chemin réel vers votre fichier `ssl-dhparams.pem`. Souvent, il est généré une seule fois.
+      #      - /var/www/certbot:/var/www/certbot
+      - /etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
