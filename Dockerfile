@@ -37,6 +37,6 @@ COPY nginx-prod.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port et exécuter Nginx
 EXPOSE 80
-EXPOSE 443
+#EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]

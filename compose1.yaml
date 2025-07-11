@@ -1,0 +1,25 @@
+services:
+  monimage:
+    build: .
+    # On supprime la section 'ports' ! Le conteneur n'est plus lié à l'hôte.
+    # ports:
+    #   - "80:80"
+    #   - "443:443"
+    networks:
+      - default # Réseau interne au projet
+      - webproxy # Réseau partagé pour communiquer avec Traefik
+    labels:
+      - "traefik.enable=true" # Demande à Traefik de gérer ce conteneur
+      # Définit une route : si la requête est pour 'angular01.enclume-numerique.com'...
+      - "traefik.http.routers.monimage.rule=Host(`angular01.enclume-numerique.com`)"
+      # ...alors envoie le trafic au service 'monimage' sur son port 80 interne.
+      - "traefik.http.services.monimage.loadbalancer.server.port=80"
+      # Lie le routeur au point d'entrée 'web' (port 80 de Traefik)
+      - "traefik.http.routers.monimage.entrypoints=web"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
+
+networks:
+  webproxy:
+    external: true
