@@ -7,24 +7,20 @@ services:
     labels:
       - "traefik.enable=true"
 
-      # Routeur pour le trafic HTTPS
-      - "traefik.http.routers.monimage.rule=Host(`angular01.enclume-numerique.com`)"
-      - "traefik.http.routers.monimage.entrypoints=websecure" # Écoute sur le point d'entrée HTTPS
-      - "traefik.http.routers.monimage.tls=true" # Active le TLS/SSL
+      # Règle corrigée pour accepter le domaine avec ET sans 'www'
+      - "traefik.http.routers.monimage.rule=Host(`angular01.enclume-numerique.com`, `www.angular01.enclume-numerique.com`)"
+      - "traefik.http.routers.monimage.entrypoints=websecure"
+      - "traefik.http.routers.monimage.tls=true"
+      # On dit au routeur d'utiliser notre résolveur 'le' pour obtenir le certificat
+      - "traefik.http.routers.monimage.tls.certresolver=le"
 
-      # Indique à Traefik que notre service 'monimage' écoute sur le port 80
       - "traefik.http.services.monimage.loadbalancer.server.port=80"
 
-      # Optionnel mais recommandé: rediriger HTTP vers HTTPS
-      - "traefik.http.routers.monimage-http.rule=Host(`angular01.enclume-numerique.com`)"
+      # Redirection HTTP -> HTTPS (cette partie reste la même)
+      - "traefik.http.routers.monimage-http.rule=Host(`angular01.enclume-numerique.com`, `www.angular01.enclume-numerique.com`)"
       - "traefik.http.routers.monimage-http.entrypoints=web"
       - "traefik.http.routers.monimage-http.middlewares=https-redirect"
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
-
-    # On supprime la section 'volumes' car ce conteneur n'a plus besoin des certificats
-    # volumes:
-    #   - /etc/letsencrypt:/etc/letsencrypt:ro
-    #   - /etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
 
 networks:
   webproxy:
