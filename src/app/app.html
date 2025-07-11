@@ -1,0 +1,90 @@
+<h2>Angular déploiement</h2>
+<h4>Mots clés 1 : Angular, Docker, Nginx, development, production</h4>
+<h5>Commandes utiles</h5>
+
+<ul>
+  <li>ng g environments</li>
+  <li>Linux, contenu d'un fichier : sudo head -20 /var/www/html/angular01/browser/index.html
+  </li>
+
+</ul>
+
+<h5>Exécution mode développement</h5>
+<ol>
+  <li>ng build --configuration=development  -> crée dossier dist</li>
+  <li>docker-compose up --build -d</li>
+</ol>
+
+<h5>Exécution mode production</h5>
+<ol>
+  <li>ng build --configuration=production  -> crée dossier dist</li>
+  <li>Modifier Nginx pour le mode production : ie Configurer votre Serveur Web (NGINX)
+  </li>
+  <li>Sur le VPS : Déployer les Fichiers sur le VPS</li>
+  <li>docker-compose up --build -d</li>
+</ol>
+
+<h5>Urls</h5>
+<ul>
+  <li>Comment configurer des clés SSH : gestion efficace des clés pour des connexions à distance sécurisées.<br>
+    <a href="https://www.hostinger.com/tutorials/how-to-set-up-ssh-keys">https://www.hostinger.com/tutorials/how-to-set-up-ssh-keys</a></li>
+  <li>Connexion au serveur VPS à partir de l'ordinateur local : <code>ssh root&#64;vps-ip</code></li>
+  <li>Création du dossier du projet sur le serveur VPS :</li>
+</ul>
+
+<h5>Commandes locales à partir du dossier du projet vers le VPS</h5>
+<ul>
+  <li>scp -r dist/angular01/browser/* root&#64;93.127.162.37:<b>/var/www/html[/angular01>]</b>
+    <br>ou<br>
+    scp -r dist/angular01/browser/* root&#64;93.127.162.37:<b>/usr/share/nginx/html[/angular01]</b>
+  </li>
+</ul>
+
+<h5>Commandes VPS</h5>
+<ul>
+  <li>Pointez votre nom de domaine vers l’IP du VPS (via le DNS de votre registrar).</li>
+  <li>Copie de 'dist folder' vers le serveur VPS :<br>
+  Sur l'ordinateur local (C:\Users\hamoh\Documents\travail\deploie\angular01), tapez la commande :
+    <code>scp -r dist/angular01/* root&#64;93.127.162.37:/var/www/html/angular01</code>
+  </li>
+  <li>
+    Création contenu Nginx pour le projet sur le serveur VPS :
+    <code>sudo nano /etc/nginx/sites-available/nginx.conf</code>
+  </li>
+  <li>Activer le site dans Nginx (lien) sur le serveur VPS :
+    <code>sudo ln -s /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-enabled/</code></li>
+  <li>HTTPS avec Let’s Encrypt (normal): <br>
+    1. **Installation des outils** : Connectez-vous à votre VPS en SSH et installez Docker, Docker Compose, Git et Certbot.<br>
+    <code>
+    sudo apt-get update<br>
+    sudo apt-get install -y docker.io docker-compose git certbot
+    </code><br>
+    2. **Obtention des certificats SSL**
+    Nous allons utiliser Certbot pour obtenir des certificats SSL gratuits de Let's Encrypt. Comme NGINX tournera dans un conteneur, nous obtiendrons les certificats en mode `standalone` avant de lancer nos services.
+    # Assurez-vous qu'aucun service n'utilise le port 80 (ex: sudo systemctl stop nginx si déjà installé)<br>
+    <code>
+    sudo certbot certonly --standalone -d enclume-numerique.com -d www.enclume-numerique.com
+      </code>
+    <br>ou avec sous-domaine : <br>
+    <code>
+    sudo certbot certonly --standalone -d ssdomaine.enclume-numerique.com -d www.ssdomaine.enclume-numerique.com
+    </code>
+      <br>ou (avec création d'enregistrement DNS)<br>
+    <code>
+      sudo certbot certonly --manual --preferred-challenges dns -d enclume-numerique.com -d www.enclume-numerique.com<br>
+    </code>
+  </li>
+
+  <li>Vérifie que la config est correcte : <code>sudo nginx -t </code> </li>
+  <li>Recharge Nginx : <code>sudo systemctl reload nginx</code></li>
+
+  <li><code>docker compose up --build -d</code>
+    <br>ou, suivant le cas,<br>
+  <code>docker compose up -d</code>/li>
+</ul>
+
+
+
+
+
+

@@ -1,0 +1,16 @@
+# Git
+.git
+.gitignore
+
+# Dépendances locales
+node_modules
+
+# Fichiers de build
+dist
+build
+
+# Fichiers de l'IDE et du système
+.idea
+.vscode
+*.swp
+npm-debug.log
