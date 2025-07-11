@@ -33,7 +33,7 @@ RUN chown -R nginx:nginx /var/www/html/angular01 \
 RUN rm /etc/nginx/conf.d/default.conf
 
 # Copier notre propre configuration Nginx
-COPY nginx-prod.conf /etc/nginx/conf.d/default.conf
+COPY nginx-docker.conf /etc/nginx/conf.d/default.conf
 
 # Exposer le port et exécuter Nginx
 EXPOSE 80
