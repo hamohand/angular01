@@ -1,27 +1,28 @@
 services:
-  monimage:
+  # Le nom du service est maintenant défini par la variable
+  ${SERVICE_NAME}:
     build: .
     networks:
       - default
       - webproxy
     labels:
       - "traefik.enable=true"
-
-      # Indique explicitement à Traefik d'utiliser ce réseau pour communiquer
       - "traefik.docker.network=webproxy"
 
-      # Règle corrigée avec l'opérateur OU (||)
-      - "traefik.http.routers.monimage.rule=Host(`angular01.enclume-numerique.com`) || Host(`www.angular01.enclume-numerique.com`)"
-      - "traefik.http.routers.monimage.entrypoints=websecure"
-      - "traefik.http.routers.monimage.tls=true"
-      - "traefik.http.routers.monimage.tls.certresolver=le"
+      # Le nom du routeur utilise la variable SERVICE_NAME
+      # La règle de routage utilise les variables de domaine
+      - "traefik.http.routers.${SERVICE_NAME}.rule=Host(`${DOMAIN_NAME}`) || Host(`${WWW_DOMAIN_NAME}`)"
+      - "traefik.http.routers.${SERVICE_NAME}.entrypoints=websecure"
+      - "traefik.http.routers.${SERVICE_NAME}.tls=true"
+      - "traefik.http.routers.${SERVICE_NAME}.tls.certresolver=le"
 
-      - "traefik.http.services.monimage.loadbalancer.server.port=80"
+      # Le service Traefik utilise aussi la variable
+      - "traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=80"
 
-      # Règle de redirection également corrigée
-      - "traefik.http.routers.monimage-http.rule=Host(`angular01.enclume-numerique.com`) || Host(`www.angular01.enclume-numerique.com`)"
-      - "traefik.http.routers.monimage-http.entrypoints=web"
-      - "traefik.http.routers.monimage-http.middlewares=https-redirect"
+      # Idem pour le routeur de redirection HTTP -> HTTPS
+      - "traefik.http.routers.${SERVICE_NAME}-http.rule=Host(`${DOMAIN_NAME}`) || Host(`${WWW_DOMAIN_NAME}`)"
+      - "traefik.http.routers.${SERVICE_NAME}-http.entrypoints=web"
+      - "traefik.http.routers.${SERVICE_NAME}-http.middlewares=https-redirect"
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
 
 networks:
