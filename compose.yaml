@@ -7,6 +7,9 @@ services:
     labels:
       - "traefik.enable=true"
 
+      # Indique explicitement à Traefik d'utiliser ce réseau pour communiquer
+      - "traefik.docker.network=webproxy"
+
       # Règle corrigée avec l'opérateur OU (||)
       - "traefik.http.routers.monimage.rule=Host(`angular01.enclume-numerique.com`) || Host(`www.angular01.enclume-numerique.com`)"
       - "traefik.http.routers.monimage.entrypoints=websecure"
