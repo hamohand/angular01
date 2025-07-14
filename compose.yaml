@@ -3,8 +3,8 @@ services:
   ${SERVICE_NAME}:
     build: .
     networks:
-      - default
-      - webproxy
+      - default # Réseau interne au projet
+      - webproxy # Réseau partagé pour communiquer avec Traefik
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=webproxy"
